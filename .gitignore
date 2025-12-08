@@ -57,3 +57,27 @@ logs/
 tmp/
 temp/
 *.tmp
+
+# Reports (generated files)
+reports/*.json
+reports/*.html
+reports/*.csv
+reports/results/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db

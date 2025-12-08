@@ -1,303 +1,262 @@
-# 🔐 GitHub Organization Security Scan
+# 🔐 GitHub Organization Security Scanner
 
-**Dashboard contínuo de segurança para QUALQUER organização GitHub** usando **Steampipe** e **GitHub Actions**.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![GitHub Actions](https://img.shields.io/badge/CI-GitHub%20Actions-blue)](https://github.com/features/actions)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 
-[![Generic](https://img.shields.io/badge/works-any%20org-brightgreen)]()
-[![Auto-detect](https://img.shields.io/badge/auto--detect-organization-blue)]()
-[![MIT](https://img.shields.io/badge/license-MIT-green)]()
+**Automated security auditing for GitHub organizations using native GitHub REST API.**
 
-## 🌟 Características Principais
+A lightweight, zero-dependency tool that continuously monitors your GitHub organization's security posture, generating comprehensive reports and interactive dashboards.
 
-✅ **Funciona em qualquer organização** - Detecção automática via token
-✅ **Setup em 3 passos** - Pronto em menos de 5 minutos
-✅ **Zero configuração** - Não precisa especificar nome da org
-✅ **Totalmente automatizado** - Execução semanal + manual
-✅ **Dashboard interativo** - HTML com insights visuais
+## ✨ Features
 
-## 📋 Visão Geral
-
-Este projeto fornece uma solução **plug-and-play** automatizada para auditar continuamente a postura de segurança de **qualquer organização GitHub**, gerando insights valiosos sobre:
-
-- 📦 **Repositórios** - Visibilidade, configurações, atividade
-- 👥 **Usuários e Permissões** - 2FA, roles, colaboradores externos
-- 🛡️ **Branch Protection** - Regras de proteção configuradas
-- 🔒 **Configurações de Segurança** - Secret scanning, Dependabot, webhooks
-
-### 🎯 Funcionalidades
-
-✅ Execução automática semanal via GitHub Actions
-✅ Dashboard HTML interativo com visualizações
-✅ Relatórios em JSON e CSV para análise
-✅ Criação automática de issues com achados críticos
-✅ Histórico de scans para tracking de melhorias
-✅ Queries SQL customizáveis do Steampipe
+- 🚀 **Zero External Dependencies** - Uses only GitHub REST API (no Steampipe, PostgreSQL, or other tools)
+- ⚡ **Fast Execution** - Complete audit in ~1-2 minutes
+- 🤖 **Fully Automated** - Runs weekly via GitHub Actions + manual trigger
+- 📊 **Interactive Dashboard** - Beautiful HTML reports with insights
+- 🔍 **Comprehensive Audits** - Repositories, users, permissions, branch protection, security settings
+- 🎯 **Auto-Detection** - Automatically detects your organization
+- ⚠️ **Issue Creation** - Automatically creates GitHub issues for critical findings
+- 📈 **Historical Tracking** - All reports stored in git for trend analysis
 
 ## 🚀 Quick Start
 
-**Quer começar agora? Veja o [INSTALL.md](INSTALL.md) para setup em 3 passos!**
+### Prerequisites
 
-### Instalação Rápida
+- GitHub organization (or personal account)
+- GitHub token with these scopes:
+  - `repo` - Repository access
+  - `read:org` - Organization read access
+  - `read:user` - User profile read access
 
-1. **Copie** a pasta `org-security-scan` para seu repositório
-2. **Crie** um GitHub token com scopes: `repo`, `admin:org:read`, `read:user`
-3. **Adicione** como secret `ORG_SECURITY_TOKEN`
-4. **Pronto!** Execute o workflow em Actions
+### Installation
 
-Detalhes completos: [INSTALL.md](INSTALL.md)
+**1. Use This Template or Fork**
 
----
+Click "Use this template" or fork this repository to your organization.
 
-## 🚀 Setup Detalhado
+**2. Create GitHub Token**
 
-### Pré-requisitos
+1. Go to https://github.com/settings/tokens
+2. Click "Generate new token (classic)"
+3. Select scopes: `repo`, `read:org`, `read:user`
+4. Copy the token
 
-1. **Qualquer GitHub Organization** - Funciona automaticamente!
-2. **GitHub Token** com permissões:
-   - `repo` (acesso completo aos repositórios)
-   - `admin:org` → `read:org` (leitura de dados da organização)
-   - `read:user` (leitura de informações de usuários)
+**3. Add Secret to Repository**
 
-### 1. Criar GitHub Token
+1. Go to your repository settings
+2. Navigate to: `Settings` → `Secrets and variables` → `Actions`
+3. Click "New repository secret"
+4. Name: `ORG_SECURITY_TOKEN`
+5. Value: Paste your token
+6. Click "Add secret"
 
-1. Acesse: `Settings` → `Developer settings` → `Personal access tokens` → `Tokens (classic)`
-2. Clique em `Generate new token (classic)`
-3. Selecione os scopes necessários:
-   - ✅ `repo` (Full control of private repositories)
-   - ✅ `admin:org` → `read:org` (Read org and team membership, read org projects)
-   - ✅ `read:user` (Read ALL user profile data)
-4. Copie o token gerado
+**4. Enable Workflow Permissions**
 
-### 2. Configurar Secrets no Repositório
+1. Go to `Settings` → `Actions` → `General`
+2. Under "Workflow permissions", select "Read and write permissions"
+3. Click "Save"
 
-Adicione o token como secret no repositório:
+**5. Run!**
 
-1. Vá para `Settings` → `Secrets and variables` → `Actions`
-2. Clique em `New repository secret`
-3. Nome: `ORG_SECURITY_TOKEN`
-4. Valor: Cole o token gerado
-5. Clique em `Add secret`
+Go to `Actions` → `Organization Security Scan` → `Run workflow`
 
-### 3. Ajustar Permissões do Workflow
+That's it! 🎉
 
-No repositório, vá para:
-- `Settings` → `Actions` → `General` → `Workflow permissions`
-- Selecione: ✅ `Read and write permissions`
-- Salve as alterações
+## 📊 What Gets Audited
 
-### 4. Configurar Branch Protection (Opcional)
+### 🗂️ Repositories
+- Total repositories (public/private)
+- Repositories without descriptions
+- Inactive repositories (>6 months)
+- Repositories without licenses
+- Repository visibility settings
 
-Para permitir que o workflow faça commit dos reports:
+### 🛡️ Branch Protection
+- Repositories with/without branch protection
+- Protection rule details
+- Unprotected critical branches
 
-1. `Settings` → `Branches` → `Add rule`
-2. Branch name pattern: `main` (ou sua branch principal)
-3. Marque: ✅ `Allow specified actors to bypass required pull requests`
-4. Adicione: `github-actions[bot]`
+### 👥 Users & Permissions
+- Organization members
+- External collaborators
+- Team memberships
+- Members without 2FA (when available)
+- Inactive collaborators
 
-## 📂 Estrutura do Projeto
+### 🔒 Security Settings
+- Secret scanning status
+- Dependabot configuration
+- Security policy files (SECURITY.md)
+- Security advisories
+
+## 📁 Project Structure
 
 ```
 org-security-scan/
 ├── .github/
-│   └── workflows/
-│       └── org-security-scan.yml    # Workflow principal
-├── steampipe/
-│   └── queries/
-│       ├── repositories.sql         # Auditoria de repositórios
-│       ├── users_permissions.sql    # Auditoria de usuários
-│       └── security_settings.sql    # Auditoria de segurança
+│   ├── workflows/
+│   │   └── org-security-scan.yml    # Main workflow
+│   └── SECURITY.md                  # Security policy
 ├── scripts/
-│   ├── run_audit.py                 # Executa queries Steampipe
-│   ├── generate_dashboard.py       # Gera dashboard HTML
-│   └── create_issue.py             # Cria issue com achados
-├── reports/                         # Gerado automaticamente
-│   ├── security_dashboard_latest.html
-│   ├── audit_results_TIMESTAMP.json
-│   └── results/
-│       ├── repositories_TIMESTAMP.json
-│       ├── users_permissions_TIMESTAMP.json
-│       └── security_settings_TIMESTAMP.json
-└── README.md
+│   ├── github_api_audit.py          # Main audit script (REST API)
+│   ├── generate_dashboard.py        # Dashboard generator
+│   ├── check_security_files.py      # Security files checker
+│   ├── check_inactive_collaborators.py  # Inactive users checker
+│   ├── create_issue.py              # Issue creator
+│   └── test_local_native.sh         # Local testing script
+├── reports/                         # Generated reports (gitignored)
+│   ├── audit_results_*.json         # Raw audit data
+│   └── security_dashboard_*.html    # Interactive dashboard
+├── MIGRATION_GUIDE.md               # For Steampipe users
+├── INSTALL.md                       # Detailed installation
+├── QUICKSTART.md                    # Quick start guide
+├── SETUP_CHECKLIST.md               # Setup checklist
+└── README.md                        # This file
 ```
 
-## 🔧 Como Usar
+## 🔧 Configuration
 
-### Execução Automática
+### Environment Variables
 
-O workflow roda automaticamente:
-- **Semanalmente**: Toda segunda-feira às 9h UTC
-- **Em push para main**: Para testes e validação
+The scripts support multiple token environment variable names:
 
-### Execução Manual
-
-1. Vá para `Actions` no repositório
-2. Selecione o workflow `Organization Security Scan`
-3. Clique em `Run workflow`
-4. Selecione a branch e clique em `Run workflow`
-
-### Acessar Resultados
-
-Os resultados ficam disponíveis em três formatos:
-
-#### 1. Dashboard HTML
-- Arquivo: `reports/security_dashboard_latest.html`
-- Acesse diretamente no navegador após o workflow
-- Interface visual com gráficos e métricas
-
-#### 2. Artifacts do Workflow
-- Vá para a execução do workflow
-- Baixe o artifact `security-reports-{run_number}`
-- Contém todos os relatórios JSON, HTML e CSV
-
-#### 3. Commit no Repositório
-- Os reports são commitados automaticamente
-- Histórico completo de scans disponível no Git
-
-## 📊 Categorias de Auditoria
-
-### 1. Repositórios
-
-- ✅ Visão geral (visibilidade, branch padrão, atividade)
-- ✅ Repositórios públicos (risco de exposição)
-- ✅ Repositórios sem descrição
-- ✅ Repositórios inativos (>6 meses)
-- ✅ Configuração de features (issues, wiki, projects)
-- ✅ Forks desatualizados
-- ✅ Repositórios sem licença
-- ✅ Estatísticas gerais
-
-### 2. Usuários e Permissões
-
-- ✅ Membros da organização
-- ✅ **Usuários SEM 2FA** (CRÍTICO)
-- ✅ Administradores
-- ✅ Colaboradores externos
-- ✅ Times e suas configurações
-- ✅ Membros por time
-- ✅ Permissões de times em repositórios
-- ✅ Usuários com acesso admin
-- ✅ Estatísticas de membros
-- ✅ Contas inativas
-
-### 3. Branch Protection e Segurança
-
-- ✅ Status de proteção de branches
-- ✅ Detalhes de branch protection rules
-- ✅ **Repositórios SEM proteção** (CRÍTICO)
-- ✅ Configurações de segurança (secret scanning, Dependabot)
-- ✅ **Repos sem secret scanning** (CRÍTICO)
-- ✅ Repos sem Dependabot
-- ✅ Webhooks configurados
-- ✅ Regras de proteção fracas
-- ✅ Deploy keys
-- ✅ Estatísticas de segurança
-
-## 🎨 Dashboard Features
-
-O dashboard HTML gerado inclui:
-
-- 📊 Métricas em cards visuais
-- 🚨 Achados críticos destacados
-- 📈 Estatísticas consolidadas
-- 💡 Recomendações de segurança
-- 🎯 Checklist de ações
-- 🔗 Links para documentação oficial
-
-## 🔍 Queries Customizadas
-
-Você pode adicionar suas próprias queries SQL:
-
-1. Crie um arquivo `.sql` em `steampipe/queries/`
-2. Escreva queries usando as tabelas do [GitHub Plugin](https://hub.steampipe.io/plugins/turbot/github/tables)
-3. O script `run_audit.py` executará automaticamente
-
-### Exemplo de Query Customizada
-
-```sql
--- Repositórios com muitas issues abertas
-SELECT
-  name as "Repositório",
-  open_issues_count as "Issues Abertas",
-  visibility as "Visibilidade"
-FROM
-  github_repository
-WHERE
-  owner_login = (SELECT login FROM github_organization LIMIT 1)
-  AND open_issues_count > 50
-ORDER BY
-  open_issues_count DESC;
+```bash
+# In order of precedence:
+GH_TOKEN=your_token              # Recommended
+ORG_SECURITY_TOKEN=your_token    # GitHub Actions default
+GITHUB_TOKEN=your_token          # Fallback
 ```
 
-## 📝 Issues Automáticas
+### Workflow Schedule
 
-O workflow cria automaticamente uma GitHub Issue quando:
+By default, runs weekly on Mondays at 9 AM UTC. Customize in `.github/workflows/org-security-scan.yml`:
 
-- ✅ Achados críticos são detectados
-- ✅ Achados de alta severidade são encontrados
+```yaml
+on:
+  schedule:
+    - cron: '0 9 * * 1'  # Customize this
+```
 
-A issue inclui:
-- 📋 Resumo executivo
-- 🚨 Achados críticos e de alta severidade
-- 📋 Checklist de recomendações
-- 🔗 Links para documentação
+## 💻 Local Testing
 
-## 🛠️ Troubleshooting
+Test locally before pushing to GitHub:
 
-### Erro: "Resource not accessible by integration"
+```bash
+# 1. Set your token
+export GH_TOKEN='your_github_token_here'
 
-**Solução**: Verifique as permissões do workflow:
-1. `Settings` → `Actions` → `General`
-2. Selecione `Read and write permissions`
+# 2. Run the test script
+./scripts/test_local_native.sh
 
-### Erro: "Steampipe plugin not found"
+# 3. View results
+open reports/security_dashboard_latest.html
+```
 
-**Solução**: O workflow instala automaticamente. Se persistir:
-1. Verifique logs do step "Install GitHub Plugin"
-2. Pode ser problema temporário de rede
+**Requirements:**
+- Python 3.11+
+- `requests` library: `pip install requests`
 
-### Token sem permissões suficientes
+## 📖 Documentation
 
-**Solução**: Recrie o token com os scopes:
-- `repo`, `admin:org` (read), `read:user`
+- **[Installation Guide](INSTALL.md)** - Detailed setup instructions
+- **[Quick Start Guide](QUICKSTART.md)** - Get started in 5 minutes
+- **[Setup Checklist](SETUP_CHECKLIST.md)** - Step-by-step checklist
+- **[Migration Guide](MIGRATION_GUIDE.md)** - Migrating from Steampipe
+- **[Security Policy](.github/SECURITY.md)** - Security guidelines
 
-### Dashboard não está sendo gerado
+## 🔍 Example Reports
 
-**Solução**:
-1. Verifique se Python 3.11+ está instalado
-2. Revise logs do step "Generate Security Dashboard"
+The workflow generates:
 
-## 📚 Referências
+1. **JSON Reports** (`audit_results_*.json`)
+   - Complete audit data
+   - Machine-readable format
+   - Historical comparison
 
-- [Steampipe Documentation](https://steampipe.io/docs)
-- [GitHub Plugin Tables](https://hub.steampipe.io/plugins/turbot/github/tables)
-- [GitHub Security Best Practices](https://docs.github.com/en/code-security)
-- [GitHub Actions Documentation](https://docs.github.com/en/actions)
+2. **HTML Dashboard** (`security_dashboard_*.html`)
+   - Interactive web interface
+   - Visual charts and graphs
+   - Executive summary
+   - Actionable recommendations
 
-## 🤝 Contribuindo
+3. **GitHub Issues** (optional)
+   - Created for critical findings
+   - Tagged with severity levels
+   - Action items included
 
-Contribuições são bem-vindas! Para adicionar:
+## 🤝 Contributing
 
-1. Novas queries SQL
-2. Melhorias no dashboard
-3. Análises adicionais
-4. Exportação para outros formatos
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-Faça um fork e envie um PR!
+### Development
 
-## 📄 Licença
+```bash
+# Clone the repository
+git clone https://github.com/your-org/org-security-scan.git
+cd org-security-scan
 
-MIT License - Sinta-se livre para usar e modificar!
+# Test locally
+export GH_TOKEN='your_token'
+./scripts/test_local_native.sh
 
-## 🆘 Suporte
+# Make changes and test
+python3 scripts/github_api_audit.py
+```
 
-Precisa de ajuda?
+## 🆚 Why This Tool?
 
-1. Verifique a seção [Troubleshooting](#-troubleshooting)
-2. Revise os logs do workflow no GitHub Actions
-3. Consulte a [documentação do Steampipe](https://steampipe.io/docs)
-4. Abra uma issue neste repositório
+| Feature | This Tool | Steampipe-based | Other Tools |
+|---------|-----------|-----------------|-------------|
+| Installation | ✅ None | ❌ Complex | ⚠️ Varies |
+| Dependencies | ✅ Python + requests | ❌ PostgreSQL + plugins | ⚠️ Many |
+| Speed | ✅ 1-2 min | ⚠️ 5-8 min | ⚠️ Varies |
+| Portability | ✅ Runs anywhere | ❌ Linux/Mac only | ⚠️ Varies |
+| Maintenance | ✅ Low | ⚠️ High | ⚠️ Varies |
+
+## 📋 Roadmap
+
+- [ ] Support for GitHub Enterprise Server
+- [ ] Slack/Discord notifications
+- [ ] Custom compliance rules
+- [ ] Multi-organization support
+- [ ] Trend analysis and charts
+- [ ] PDF report generation
+
+## 🐛 Troubleshooting
+
+### "No module named 'requests'"
+```bash
+pip install requests
+```
+
+### "Token not found"
+```bash
+export GH_TOKEN='your_token_here'
+```
+
+### "Permission denied"
+Make sure your token has the correct scopes: `repo`, `read:org`, `read:user`
+
+### Rate Limiting
+The tool respects GitHub API rate limits (5,000 requests/hour for authenticated users). If you hit the limit, wait an hour or reduce the scope of auditing.
+
+## 📄 License
+
+MIT License - see [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- Built with [GitHub REST API](https://docs.github.com/en/rest)
+- Inspired by security best practices from the GitHub Security Lab
+- Community contributions and feedback
+
+## 📧 Support
+
+- 📖 [Documentation](./INSTALL.md)
+- 🐛 [Report Issues](https://github.com/77Negativo/org-security-scan/issues)
+- 💬 [Discussions](https://github.com/77Negativo/org-security-scan/discussions)
 
 ---
 
-🤖 **Automatize sua governança de segurança com org-security-scan!**
-
-*Powered by Steampipe + GitHub Actions*
+**Made with ❤️ by the community. Star ⭐ this repo if you find it useful!**

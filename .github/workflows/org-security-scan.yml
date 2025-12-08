@@ -1,0 +1,110 @@
+name: Organization Security Scan
+
+on:
+  # Executa semanalmente às segundas-feiras às 9h UTC
+  schedule:
+    - cron: '0 9 * * 1'
+
+  # Permite execução manual
+  workflow_dispatch:
+
+  # Executa em push para branch main (para testes)
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  security-scan:
+    runs-on: ubuntu-latest
+    name: GitHub Organization Security Audit
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python Dependencies
+        run: |
+          pip install requests
+
+      - name: Run Security Audit (Native GitHub API)
+        env:
+          GITHUB_TOKEN: ${{ secrets.ORG_SECURITY_TOKEN }}
+        run: |
+          echo "🔍 Executando auditoria de segurança organizacional com GitHub API nativa..."
+
+          # Criar diretório para resultados
+          mkdir -p reports/results
+
+          # Executar auditoria usando GitHub API REST
+          python3 scripts/github_api_audit.py
+
+      - name: Generate Security Dashboard
+        run: |
+          echo "📊 Gerando dashboard de segurança..."
+          python3 scripts/generate_dashboard.py
+
+      - name: Check Security Files
+        run: |
+          echo "📋 Verificando arquivos de segurança..."
+          python3 scripts/check_security_files.py
+
+      - name: Check Inactive Collaborators
+        env:
+          GITHUB_TOKEN: ${{ secrets.ORG_SECURITY_TOKEN }}
+        run: |
+          echo "⏰ Verificando colaboradores inativos..."
+          python3 scripts/check_inactive_collaborators.py
+
+      - name: Regenerate Dashboard with All Data
+        run: |
+          echo "📊 Re-gerando dashboard com todos os dados..."
+          python3 scripts/generate_dashboard.py
+
+      - name: Upload Security Reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-reports-${{ github.run_number }}
+          path: |
+            reports/*.html
+            reports/*.json
+            reports/results/*.csv
+          retention-days: 90
+
+      - name: Create GitHub Issue on Findings
+        if: success()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python3 scripts/create_issue.py
+
+      - name: Commit Reports to Repository
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+
+          # Adicionar reports ao git
+          git add reports/*.html reports/*.json || true
+
+          # Fazer commit se houver mudanças
+          git diff --staged --quiet || git commit -m "📊 Security scan results - $(date +'%Y-%m-%d %H:%M')"
+
+      - name: Push Reports
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "✅ Workflow concluído com sucesso!"
+          echo "📊 Verifique os relatórios em reports/"

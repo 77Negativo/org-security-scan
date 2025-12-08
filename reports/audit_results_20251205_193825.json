@@ -1,0 +1,17 @@
+{
+  "scan_timestamp": "2025-12-05T19:38:25.128813",
+  "results": {
+    "repositories": {
+      "error": "Command '['steampipe', 'query', 'steampipe/queries/repositories.sql', '--output', 'json']' returned non-zero exit status 41.",
+      "stderr": "Warning: query 1 of 1 failed: ERROR: column \"default_branch\" does not exist (SQLSTATE 42703)\n"
+    },
+    "users_permissions": {
+      "error": "Command '['steampipe', 'query', 'steampipe/queries/users_permissions.sql', '--output', 'json']' returned non-zero exit status 41.",
+      "stderr": "Warning: query 1 of 1 failed: ERROR: column \"two_factor_disabled\" does not exist (SQLSTATE 42703)\n"
+    },
+    "security_settings": {
+      "error": "Command '['steampipe', 'query', 'steampipe/queries/security_settings.sql', '--output', 'json']' returned non-zero exit status 41.",
+      "stderr": "Warning: query 1 of 1 failed: ERROR: column r.default_branch does not exist (SQLSTATE 42703)\n"
+    }
+  }
+}

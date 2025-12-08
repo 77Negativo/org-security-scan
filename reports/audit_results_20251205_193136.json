@@ -1,0 +1,17 @@
+{
+  "scan_timestamp": "2025-12-05T19:31:36.115860",
+  "results": {
+    "repositories": {
+      "error": "Command '['steampipe', 'query', 'steampipe/queries/repositories.sql', '--output', 'json']' returned non-zero exit status 41.",
+      "stderr": "Warning: query 1 of 1 failed: ERROR: cannot insert multiple commands into a prepared statement (SQLSTATE 42601)\n"
+    },
+    "users_permissions": {
+      "error": "Command '['steampipe', 'query', 'steampipe/queries/users_permissions.sql', '--output', 'json']' returned non-zero exit status 41.",
+      "stderr": "Warning: query 1 of 1 failed: ERROR: cannot insert multiple commands into a prepared statement (SQLSTATE 42601)\n"
+    },
+    "security_settings": {
+      "error": "Command '['steampipe', 'query', 'steampipe/queries/security_settings.sql', '--output', 'json']' returned non-zero exit status 41.",
+      "stderr": "Warning: query 1 of 1 failed: ERROR: cannot insert multiple commands into a prepared statement (SQLSTATE 42601)\n"
+    }
+  }
+}

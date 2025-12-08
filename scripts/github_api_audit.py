@@ -334,12 +334,66 @@ class GitHubAuditor:
         return results
 
 
+def convert_to_steampipe_format(data: Dict) -> Dict:
+    """
+    Converte dados do formato nativo para formato compatível com Steampipe
+    para manter compatibilidade com dashboard existente
+    """
+    converted = {
+        "scan_timestamp": data.get("scan_timestamp"),
+        "organization": data.get("organization"),
+        "results": {}
+    }
+
+    for category, category_data in data.get("results", {}).items():
+        if not isinstance(category_data, dict):
+            converted["results"][category] = {"rows": []}
+            continue
+
+        # Mapear categorias para suas listas de dados
+        rows_data = []
+
+        if category == "repositories":
+            rows_data = category_data.get("repositories", [])
+        elif category == "branch_protection":
+            # Combinar listas protegidas e não protegidas
+            protected = category_data.get("protected_repos_list", [])
+            unprotected = category_data.get("unprotected_repos_list", [])
+            rows_data = protected + unprotected
+        elif category == "users_permissions":
+            rows_data = category_data.get("members_list", [])
+        elif category == "security_settings":
+            # Para security settings, usar os repositórios verificados
+            rows_data = category_data.get("repos_with_secret_scanning_list", []) + \
+                       category_data.get("repos_without_secret_scanning_list", [])
+        else:
+            # Para categorias desconhecidas, tentar pegar qualquer lista
+            for key, value in category_data.items():
+                if isinstance(value, list) and len(value) > 0:
+                    rows_data = value
+                    break
+
+        # Criar estrutura compatível com Steampipe
+        converted["results"][category] = {
+            "columns": [],  # Dashboard não usa isso realmente
+            "rows": rows_data
+        }
+
+        # Manter também os dados originais para compatibilidade
+        converted["results"][category].update(category_data)
+
+    return converted
+
+
 def save_results(data: Dict, filename: str = "audit_results"):
-    """Salva os resultados em JSON"""
+    """Salva os resultados em JSON (formato compatível com dashboard)"""
+    # Converter para formato compatível com dashboard existente
+    compatible_data = convert_to_steampipe_format(data)
+
     output_file = RESULTS_DIR.parent / f"{filename}_{TIMESTAMP}.json"
 
     with open(output_file, 'w', encoding='utf-8') as f:
-        json.dump(data, f, indent=2, ensure_ascii=False, default=str)
+        json.dump(compatible_data, f, indent=2, ensure_ascii=False, default=str)
 
     print(f"\n{'='*80}")
     print(f"✅ AUDITORIA CONCLUÍDA!")

@@ -17,7 +17,7 @@ from typing import Dict, List, Any, Optional
 REPORTS_DIR = Path("reports")
 
 # Configuração
-GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN")
+GITHUB_TOKEN = os.environ.get("GH_TOKEN") or os.environ.get("ORG_SECURITY_TOKEN") or os.environ.get("GITHUB_TOKEN")
 GITHUB_API_BASE = "https://api.github.com"
 INACTIVE_DAYS_THRESHOLD = 90  # Dias sem atividade para considerar inativo
 

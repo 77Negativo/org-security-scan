@@ -37,7 +37,7 @@ jobs:
 
       - name: Run Security Audit (Native GitHub API)
         env:
-          GITHUB_TOKEN: ${{ secrets.ORG_SECURITY_TOKEN }}
+          GH_TOKEN: ${{ secrets.ORG_SECURITY_TOKEN }}
         run: |
           echo "🔍 Executando auditoria de segurança organizacional com GitHub API nativa..."
 
@@ -59,7 +59,7 @@ jobs:
 
       - name: Check Inactive Collaborators
         env:
-          GITHUB_TOKEN: ${{ secrets.ORG_SECURITY_TOKEN }}
+          GH_TOKEN: ${{ secrets.ORG_SECURITY_TOKEN }}
         run: |
           echo "⏰ Verificando colaboradores inativos..."
           python3 scripts/check_inactive_collaborators.py

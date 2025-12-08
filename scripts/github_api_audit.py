@@ -12,7 +12,7 @@ from pathlib import Path
 from typing import Dict, List, Any
 
 # Configuração
-GITHUB_TOKEN = os.environ.get('GITHUB_TOKEN') or os.environ.get('ORG_SECURITY_TOKEN')
+GITHUB_TOKEN = os.environ.get('GH_TOKEN') or os.environ.get('ORG_SECURITY_TOKEN') or os.environ.get('GITHUB_TOKEN')
 GITHUB_API = "https://api.github.com"
 
 # Diretórios

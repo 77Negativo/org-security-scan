@@ -31,11 +31,11 @@ echo ""
 
 # Verificar token do GitHub
 echo "3️⃣  Verificando token do GitHub..."
-if [ -z "$GITHUB_TOKEN" ] && [ -z "$ORG_SECURITY_TOKEN" ]; then
+if [ -z "$GH_TOKEN" ] && [ -z "$ORG_SECURITY_TOKEN" ] && [ -z "$GITHUB_TOKEN" ]; then
     echo "❌ Token do GitHub não encontrado!"
     echo ""
     echo "💡 Configure uma das variáveis de ambiente:"
-    echo "   export GITHUB_TOKEN='seu_token_aqui'"
+    echo "   export GH_TOKEN='seu_token_aqui'"
     echo "   ou"
     echo "   export ORG_SECURITY_TOKEN='seu_token_aqui'"
     echo ""
